@@ -6,6 +6,8 @@ EventListener class for controlling game pygame events.
 import re
 import pygame
 
+# Custom User Event Codes:
+TICK = pygame.USEREVENT + 0
 
 def camel_to_snake(name: str):
     '''takes the name and converts it to snake case'''
@@ -38,6 +40,10 @@ class EventManager():
                 self.__listeners[event_type] = []
 
             self.__listeners[event_type].append(listener)
+            
+    def remove_listener(self, listener):
+        pass
+        # TODO: impl
 
 
 class EventListener:
@@ -50,6 +56,11 @@ class EventListener:
             self.custom_event_functions[event_type] = []
 
         self.custom_event_functions[event_type].append(function)
+        
+    def remove_event_function(self, event_type, *functions):
+        for function in functions:
+            if self.custom_event_functions.get(event_type):
+                self.custom_event_functions[event_type].remove(function)
 
     def do_event(self, event):
         '''

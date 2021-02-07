@@ -60,6 +60,16 @@ class EntityDrawManager:
     def draw_all(self):
         redraw_queue = []
         for entity in self._queue:
+            # if the entity is not on screen, don't draw it:
+            # make a rect slightly larger than the screen to avoid edge of screen entities:
+            screen_rect = pygame.display.get_surface().get_rect().copy()
+            screen_rect.x -= 50
+            screen_rect.y -= 50
+            screen_rect.width += 100
+            screen_rect.height += 100
+            if not entity.rect.colliderect(screen_rect):
+                continue
+            
             # erase (if it's been drawn once),
             if entity.last_draw_rect:
                 pygame.draw.rect(pygame.display.get_surface(), (0, 0, 0), entity.last_draw_rect)

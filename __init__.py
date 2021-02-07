@@ -3,9 +3,22 @@
 import os
 import sys
 import pygame
+from . import event as eventmodule
 from .event import EventListener, EventManager
 from .entity import Entity, EntityDrawManager
 from . import defaultcolors
+
+def clear_entities():
+    draw_manager = EntityDrawManager()
+    event_manager = EventManaer()
+    
+def add_entity(entity):
+    draw_manager.add_entity(entity)
+    event_manager.add_listener(entity)
+    
+def remove_entity(entity):
+    draw_manager.remove_entity(entity)
+    event_manager.remove_listener(entity)
 
 def init(resolution, fullscreen=False, color_scheme=None):
     pygame.init()
@@ -24,7 +37,7 @@ def init(resolution, fullscreen=False, color_scheme=None):
 
 def start_game():
     
-    draw_queue.add_entity(cursor)
+    draw_manager.add_entity(cursor)
     event_manager.add_listener(cursor, pygame.WINDOWLEAVE, pygame.WINDOWENTER)
     
     clock = pygame.time.Clock()
@@ -37,10 +50,11 @@ def start_game():
                 return
             
             event_manager.notify(event)
-            draw_queue.draw_all()  
+            draw_manager.draw_all()  
 
         # keeps the framerate from going to high (but not too low, low depends on our code)
         clock.tick(60)
+        pygame.event.post(pygame.event.Event(eventmodule.TICK))
         
         # displays all the graphical updates that have been made.
         pygame.display.flip()
@@ -53,14 +67,14 @@ class _Cursor (Entity, EventListener):
         self.image = None
         self.set_draw_method(self._draw)
     
-    def set_image(self, filename):
-        if filename is None: 
+    def set_image(self, filepath):
+        if filepath is None: 
             pygame.mouse.set_visible(True)
             self.image = None
         else:
-            filepath = os.path.abspath('assets/images/cursors/{}'.format(filename))
+            abs_filepath = os.path.abspath(filepath)
             pygame.mouse.set_visible(False)
-            self.image = pygame.image.load(filepath)
+            self.image = pygame.image.load(abs_filepath)
             self.image = pygame.transform.scale(self.image, (25, 25))
             self.rect = self.image.get_rect()
         
@@ -80,7 +94,7 @@ class _Cursor (Entity, EventListener):
 
 # globals:
 cursor = _Cursor()
-draw_queue = EntityDrawManager()
+draw_manager = EntityDrawManager()
 event_manager = EventManager()
 
 # package private globals:
