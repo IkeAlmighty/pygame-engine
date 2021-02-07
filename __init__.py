@@ -5,19 +5,20 @@ import sys
 import pygame
 from . import event as eventmodule
 from .event import EventListener, EventManager
-from .entity import Entity, EntityDrawManager
+from .drawing import DrawManager
+from .entity import Entity
 from . import defaultcolors
 
 def clear_entities():
-    draw_manager = EntityDrawManager()
-    event_manager = EventManaer()
+    draw_manager = DrawManager()
+    event_manager = EventManager()
     
 def add_entity(entity):
-    draw_manager.add_entity(entity)
+    draw_manager.add_drawing(entity)
     event_manager.add_listener(entity)
     
 def remove_entity(entity):
-    draw_manager.remove_entity(entity)
+    draw_manager.remove_drawing(entity)
     event_manager.remove_listener(entity)
 
 def init(resolution, fullscreen=False, color_scheme=None):
@@ -32,12 +33,10 @@ def init(resolution, fullscreen=False, color_scheme=None):
     # scheme is passed in:
     if color_scheme:
         _color_scheme = color_scheme
-    
-        
 
 def start_game():
     
-    draw_manager.add_entity(cursor)
+    draw_manager.add_drawing(cursor)
     event_manager.add_listener(cursor, pygame.WINDOWLEAVE, pygame.WINDOWENTER)
     
     clock = pygame.time.Clock()
@@ -94,7 +93,7 @@ class _Cursor (Entity, EventListener):
 
 # globals:
 cursor = _Cursor()
-draw_manager = EntityDrawManager()
+draw_manager = DrawManager()
 event_manager = EventManager()
 
 # package private globals:
